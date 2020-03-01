@@ -1,0 +1,14 @@
+.button {
+    /*-fx-border-width: 5;*/
+    /*-fx-border-color: lime;*/
+    -fx-background-insets:0;
+
+}
+
+#leftPane {
+    -fx-background-color: hotpink , hsb(10,10%,100%);
+}
+
+#rightPane {
+    -fx-background-color: skyblue  hsb(10,10%,100%);
+}
