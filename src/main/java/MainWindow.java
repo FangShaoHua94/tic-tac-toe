@@ -18,10 +18,17 @@ public class MainWindow extends AnchorPane {
     @FXML
     private Pane rightPane;
 
+    private Board board;
 
+    @FXML
+    public void initialize(){
+        board=new Board(boardPane);
+    }
 
-
-
+    @FXML
+    public void reset(){
+        initialize();
+    }
 
 
 }
