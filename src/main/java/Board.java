@@ -2,26 +2,25 @@ import javafx.scene.Node;
 import javafx.scene.control.Button;
 import javafx.scene.layout.GridPane;
 
-import java.util.ArrayList;
+import java.beans.PropertyChangeListener;
 import java.util.List;
-
 
 public class Board {
 
-    public static Player player=Player.PLAYER_1;
     private static final int DIMENSION=3;
+    public static Player player;
+
     private Tile[][] board=new Tile[DIMENSION][DIMENSION];
-    private List<TileBean> tileBeans=new ArrayList<>();
+    private TileBean tileBean=new TileBean();
+    private boolean isGameOver=false;
 
     public Board(GridPane gridPane){
+        player=Player.PLAYER_1;
         List<Node> buttons=gridPane.getChildren();
         for(int i=0;i<DIMENSION;i++){
             for(int j=0;j<DIMENSION;j++){
                 Button button=(Button)buttons.get(i*DIMENSION+j);
-                button.setDisable(false);
                 button.setText(Mark.EMPTY.toString());
-                TileBean tileBean=new TileBean();
-                tileBeans.add(tileBean);
                 tileBean.addPropertyChangeListener(e->{
                     checkBoard();
                     changePlayer();
@@ -33,10 +32,14 @@ public class Board {
     }
 
     private void gameOver(){
-        for(int i=0;i<DIMENSION;i++){
-            for(int j=0;j<DIMENSION;j++){
-                board[i][j].disableButton();
+        if(!isGameOver) {
+            for (int i = 0; i < DIMENSION; i++) {
+                for (int j = 0; j < DIMENSION; j++) {
+                    board[i][j].disableButton();
+                }
             }
+            isGameOver=true;
+            tileBean.removePropertyChangeListener();
         }
 //        drawLine
 //        displayWinner
@@ -52,7 +55,7 @@ public class Board {
             mark_2=board[i][1].getMark();
             mark_3=board[i][2].getMark();
             if(mark_1.equals(mark_2) && mark_2.equals(mark_3) && !mark_1.equals(Mark.EMPTY)){
-                System.out.println("1111");
+                System.out.println("horizontal");
                 gameOver();
                 return;
             }
@@ -62,7 +65,7 @@ public class Board {
             mark_2=board[1][i].getMark();
             mark_3=board[2][i].getMark();
             if(mark_1.equals(mark_2) && mark_2.equals(mark_3) && !mark_1.equals(Mark.EMPTY)){
-                System.out.println("2222");
+                System.out.println("vertical");
                 gameOver();
                 return;
             }
@@ -73,7 +76,7 @@ public class Board {
         mark_2=board[1][1].getMark();
         mark_3=board[2][2].getMark();
         if(mark_1.equals(mark_2) && mark_2.equals(mark_3) && !mark_1.equals(Mark.EMPTY)){
-            System.out.println("33333");
+            System.out.println("diagonal");
             gameOver();
             return;
         }
@@ -83,7 +86,7 @@ public class Board {
         mark_2=board[1][1].getMark();
         mark_3=board[2][0].getMark();
         if(mark_1.equals(mark_2) && mark_2.equals(mark_3) && !mark_1.equals(Mark.EMPTY)){
-            System.out.println("44444");
+            System.out.println("diagonal");
             gameOver();
         };
     }

@@ -1,5 +1,7 @@
 import java.beans.PropertyChangeListener;
 import java.beans.PropertyChangeSupport;
+import java.util.Arrays;
+import java.util.List;
 
 public class TileBean {
 
@@ -11,8 +13,11 @@ public class TileBean {
         support.addPropertyChangeListener(listener);
     }
 
-    public void removePropertyChangeListener(PropertyChangeListener listener) {
-        support.removePropertyChangeListener(listener);
+    public void removePropertyChangeListener() {
+        Arrays.stream(support.getPropertyChangeListeners()).forEach(x->{
+            support.removePropertyChangeListener(x);
+        });
+
     }
 
     public Mark getMark() {

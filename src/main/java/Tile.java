@@ -13,6 +13,7 @@ public class Tile {
         this.button=button;
         this.tileBean=tileBean;
         setUpButton();
+        reset();
     }
 
     private void setUpButton(){
@@ -28,10 +29,16 @@ public class Tile {
     private void markTile(){
         mark=Board.player.getMark();
         button.setText(Board.player.getMark().toString());
-        disableButton();
+        button.setDisable(true);
+    }
+
+    private void reset(){
+        button.setVisible(true);
+        button.setDisable(false);
     }
 
     public void disableButton(){
+        button.setVisible(false);
         button.setDisable(true);
     }
 
