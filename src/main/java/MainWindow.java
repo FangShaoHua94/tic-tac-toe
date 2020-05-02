@@ -1,15 +1,27 @@
+import com.sun.tools.javac.util.List;
+import javafx.animation.KeyFrame;
+import javafx.animation.Timeline;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.GridPane;
+import javafx.util.Duration;
+
+import java.util.ArrayList;
+import java.util.Arrays;
 
 public class MainWindow extends AnchorPane {
 
+    private static final int FLICKING=10;
+    private static final long FLICKING_DELAY = 200;
+    private static final long CONVERSION_DELAY =500;
     private static final int DIMENSION=3;
-    private static final int NODE_DIMENSION =98;
+    private static final int NODE_DIMENSION =90;
     private Tile[][] board = new Tile[DIMENSION][DIMENSION];
     private boolean isPlayerOneTurn;
 
@@ -44,66 +56,96 @@ public class MainWindow extends AnchorPane {
     }
 
     public void checkEndGame(){
-        if(checkBoard().equals(State.NONE)){
+        ArrayList<Tile> winningTiles=checkBoard();
+        if(winningTiles.isEmpty()){
             return;
         }
-        if(checkBoard().equals(State.PLAYER_1)){
-            System.out.println("player 1 win");
-        }else if(checkBoard().equals(State.PLAYER_2)){
-            System.out.println("player 2 win");
-        }
+        State state= winningTiles.get(0).getState();
+        flickingEffect(winningTiles,state);
         for(int i=0;i<DIMENSION;i++){
             for(int j=0;j<DIMENSION;j++){
                 board[i][j].disable();
             }
         }
+        endEffect(state);
     }
 
-    private State checkBoard(){
+    private void flickingEffect(ArrayList<Tile> tiles, State state){
+        Timeline timer = new Timeline(
+                new KeyFrame(Duration.millis(FLICKING_DELAY), e-> tiles.forEach(Tile::removeLabelGraphic)),
+                new KeyFrame(Duration.millis(FLICKING_DELAY+FLICKING_DELAY), e-> tiles.forEach(tile->tile.display(state))));
+        timer.setCycleCount(FLICKING);
+        timer.play();
+    }
+
+    private void endEffect(State state){
+        ArrayList<Tile> tiles=new ArrayList<>();
+        for(int i=0;i<DIMENSION;i++){
+            for(int j=0;j<DIMENSION;j++){
+                if(!board[i][j].getState().equals(state)){
+                    tiles.add(board[i][j]);
+                }
+            }
+        }
+        Timeline timer = new Timeline();
+        for (int i=0;i<tiles.size();i++) {
+            Tile tile= tiles.get(i);
+            timer.getKeyFrames().add(new KeyFrame(Duration.millis(CONVERSION_DELAY*(i+1)), e -> tile.display(state)));
+        }
+        timer.play();
+    }
+
+    private ArrayList<Tile> checkBoard(){
+        ArrayList<Tile> winningTiles= new ArrayList<>();
+
         // check row
         for(int i=0;i<DIMENSION;i++){
-            if(checkTriplets(board[i][0],board[i][1],board[0][2])){
-                return board[i][0].state;
+            winningTiles.addAll(Arrays.asList(board[i]).subList(0, DIMENSION));
+            if(checkTriplets(winningTiles)){
+                return winningTiles;
+            }else{
+                winningTiles.clear();
             }
         }
 
         // check col
         for(int i=0;i<DIMENSION;i++){
-            if(checkTriplets(board[0][i],board[1][i],board[2][i])){
-                return board[i][0].state;
+            for(int j=0;j<DIMENSION;j++){
+                winningTiles.add(board[j][i]);
+            }
+            if(checkTriplets(winningTiles)){
+                return winningTiles;
+            }else{
+                winningTiles.clear();
             }
         }
 
         // check diagonal
-        if(checkTriplets(board[0][0],board[1][1],board[2][2])){
-            return board[0][0].state;
+        for(int i=0;i<DIMENSION;i++) {
+            winningTiles.add(board[i][i]);
+        }
+        if(checkTriplets(winningTiles)){
+            return winningTiles;
+        }else{
+            winningTiles.clear();
         }
 
-        if(checkTriplets(board[0][2],board[1][1],board[2][0])){
-            return board[0][2].state;
+        winningTiles.addAll(List.of(board[0][2],board[1][1],board[2][0]));
+        if(checkTriplets(winningTiles)){
+            return winningTiles;
+        }else{
+            winningTiles.clear();
         }
 
-        return State.NONE;
+        return winningTiles;
     }
 
-    private boolean checkTriplets(Tile a,Tile b, Tile c){
-        return !a.isUnmark() && a.equals(b) && b.equals(c);
-    }
-
-    public void print(){
-        for(int i=0;i<DIMENSION;i++){
-            for(int j=0;j<DIMENSION;j++){
-                if(board[i][j].state.equals(State.PLAYER_1)){
-                    System.out.print("O");
-                }else if(board[i][j].state.equals(State.PLAYER_2)){
-                    System.out.print("X");
-                }else{
-                    System.out.print("#");
-                }
-            }
-            System.out.println();
+    private boolean checkTriplets(ArrayList<Tile> tiles){
+        Tile tile= tiles.get(0);
+        if(tile.isUnmark()){
+            return false;
         }
-        System.out.println("----------------------------");
+        return tiles.stream().allMatch(t->t.equals(tile));
     }
 
     enum State{
@@ -112,8 +154,8 @@ public class MainWindow extends AnchorPane {
 
     class Tile{
 
-        private static final String PLAYER_1="  O";
-        private static final String PLAYER_2="  X";
+        private static final String PLAYER_1="/image/O.png";
+        private static final String PLAYER_2="/image/X.png";
 
         private Button button;
         private Label label;
@@ -140,12 +182,12 @@ public class MainWindow extends AnchorPane {
             button.setPrefSize(NODE_DIMENSION, NODE_DIMENSION);
             button.setMinSize(NODE_DIMENSION, NODE_DIMENSION);
             button.setMaxSize(NODE_DIMENSION, NODE_DIMENSION);
+            button.getStylesheets().add(getClass().getResource("/view/Button.css").toExternalForm());
 
             button.addEventFilter(MouseEvent.MOUSE_PRESSED, e -> {
                 if (e.getButton() == MouseButton.PRIMARY) {
                     mark();
                     checkEndGame();
-                    print();
                     changePlayer();
                 }
             });
@@ -165,10 +207,22 @@ public class MainWindow extends AnchorPane {
 
         private void display(State state){
             if(state.equals(State.PLAYER_1)){
-                label.setText(PLAYER_1);
+                markLabel(PLAYER_1);
             }else{
-                label.setText(PLAYER_2);
+                markLabel(PLAYER_2);
             }
+        }
+
+        public void markLabel(String imagePath){
+            ImageView image = new ImageView(new Image(getClass().getResourceAsStream(imagePath)));
+            image.setPreserveRatio(true);
+            image.fitHeightProperty().bind(label.widthProperty());
+            image.fitHeightProperty().bind(label.heightProperty());
+            label.setGraphic(image);
+        }
+
+        public void removeLabelGraphic(){
+            label.setGraphic(null);
         }
 
         public boolean isUnmark(){
@@ -183,6 +237,10 @@ public class MainWindow extends AnchorPane {
             return label;
         }
 
+        public State getState(){
+            return state;
+        }
+
         public void disable(){
             button.setDisable(true);
         }
@@ -194,9 +252,5 @@ public class MainWindow extends AnchorPane {
                     && state.equals(((Tile) other).state)); // state check
         }
     }
-
-
-
-
 
 }

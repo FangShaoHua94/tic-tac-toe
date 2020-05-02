@@ -6,19 +6,19 @@
 <?import javafx.scene.layout.GridPane?>
 <?import javafx.scene.layout.RowConstraints?>
 
-<AnchorPane fx:id="basePane" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="500.0" prefWidth="600.0" stylesheets="@MainWindow.css" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="MainWindow">
+<AnchorPane fx:id="basePane" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="500.0" prefWidth="327.0" stylesheets="@MainWindow.css" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="MainWindow">
    <children>
-      <Button fx:id="resetButton" layoutX="250.0" layoutY="34.0" maxHeight="100.0" maxWidth="100.0" minHeight="100.0" minWidth="100.0" mnemonicParsing="false" onAction="#reset" prefHeight="100.0" prefWidth="100.0" AnchorPane.leftAnchor="250.0" AnchorPane.rightAnchor="250.0" AnchorPane.topAnchor="34.0" />
-      <GridPane fx:id="boardPane" alignment="CENTER" gridLinesVisible="true" layoutX="153.0" layoutY="162.0" AnchorPane.bottomAnchor="38.0" AnchorPane.leftAnchor="150.0" AnchorPane.rightAnchor="150.0" AnchorPane.topAnchor="162.0">
+      <Button fx:id="resetButton" layoutX="114.0" layoutY="34.0" maxHeight="100.0" maxWidth="100.0" minHeight="100.0" minWidth="100.0" mnemonicParsing="false" onAction="#reset" prefHeight="100.0" prefWidth="100.0" AnchorPane.leftAnchor="114.0" AnchorPane.rightAnchor="113.0" AnchorPane.topAnchor="34.0" />
+      <GridPane fx:id="boardPane" alignment="CENTER" gridLinesVisible="true" hgap="10.0" layoutX="19.0" layoutY="169.0" maxHeight="290.0" maxWidth="290.0" minHeight="290.0" minWidth="290.0" prefHeight="290.0" prefWidth="290.0" vgap="10.0" AnchorPane.topAnchor="169.0">
         <columnConstraints>
-          <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
-            <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
-          <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+          <ColumnConstraints hgrow="SOMETIMES" minWidth="90.0" prefWidth="90.0" />
+            <ColumnConstraints hgrow="SOMETIMES" minWidth="90.0" prefWidth="90.0" />
+          <ColumnConstraints hgrow="SOMETIMES" minWidth="90.0" prefWidth="90.0" />
         </columnConstraints>
         <rowConstraints>
-          <RowConstraints minHeight="10.0" prefHeight="100.0" vgrow="SOMETIMES" />
-          <RowConstraints minHeight="10.0" prefHeight="100.0" vgrow="SOMETIMES" />
-          <RowConstraints prefHeight="100.0" vgrow="SOMETIMES" />
+          <RowConstraints minHeight="90.0" prefHeight="90.0" vgrow="SOMETIMES" />
+          <RowConstraints minHeight="90.0" prefHeight="90.0" vgrow="SOMETIMES" />
+          <RowConstraints minHeight="90.0" prefHeight="90.0" vgrow="SOMETIMES" />
         </rowConstraints>
       </GridPane>
    </children>
